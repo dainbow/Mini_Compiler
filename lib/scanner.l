@@ -52,7 +52,7 @@ blank [ \t\r]
 ":"        return yy::parser::make_DDOTS (loc);
 "="        return yy::parser::make_ASSIGN (loc);
 "main"     return yy::parser::make_MAIN (loc);
-"decl"     return yy::parser::make_DECL (loc);
+"declare"  return yy::parser::make_DECL (loc);
 "if"       return yy::parser::make_IF (loc);
 "else"     return yy::parser::make_ELSE (loc);
 "while"    return yy::parser::make_WHILE  (loc);
@@ -62,6 +62,12 @@ blank [ \t\r]
 "-"        return yy::parser::make_SUB (loc);
 "*"        return yy::parser::make_MUL (loc);
 "/"        return yy::parser::make_DIV (loc);
+"<"        return yy::parser::make_L (loc);
+">"        return yy::parser::make_G (loc);
+"<="       return yy::parser::make_LEQ (loc);
+">="       return yy::parser::make_GEQ (loc);
+"=="       return yy::parser::make_EQ (loc);
+"!="       return yy::parser::make_NEQ (loc);
 {int}      return make_NUMBER(yytext, loc);
 {id}       return yy::parser::make_IDENTIFIER(yytext, loc);
 .          {

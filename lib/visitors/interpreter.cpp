@@ -19,6 +19,7 @@ void Interpreter::Visit(StatementsList* statements_list) {
 void Interpreter::Visit(AssignState* assignment) {
   assignment->expression_->Accept(this);
 
+  assert(variables_.find(assignment->variable_) != variables_.end());
   variables_[assignment->variable_] = Eval(assignment->expression_);
 }
 
@@ -38,6 +39,10 @@ void Interpreter::Visit(WhileState* whileState) {
   while (Eval(whileState->expression_)) {
     whileState->cond_->Accept(this);
   }
+}
+
+void Interpreter::Visit(DeclState* declState) {
+  variables_[declState->variable_] = 0;
 }
 
 void Interpreter::Visit(AddExpression* addExpr) {
@@ -62,6 +67,25 @@ void Interpreter::Visit(IdentExpression* identExpr) {
 
 void Interpreter::Visit(DivExpression* divExpr) {
   values_.push(Eval(divExpr->first_) * Eval(divExpr->second_));
+}
+
+void Interpreter::Visit(LLogic* log) {
+  values_.push(Eval(log->first_) < Eval(log->second_));
+}
+void Interpreter::Visit(GLogic* log) {
+  values_.push(Eval(log->first_) > Eval(log->second_));
+}
+void Interpreter::Visit(LeqLogic* log) {
+  values_.push(Eval(log->first_) <= Eval(log->second_));
+}
+void Interpreter::Visit(GeqLogic* log) {
+  values_.push(Eval(log->first_) >= Eval(log->second_));
+}
+void Interpreter::Visit(EqLogic* log) {
+  values_.push(Eval(log->first_) == Eval(log->second_));
+}
+void Interpreter::Visit(NeqLogic* log) {
+  values_.push(Eval(log->first_) != Eval(log->second_));
 }
 
 int Interpreter::Eval(Expression* expr) {

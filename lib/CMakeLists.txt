@@ -36,10 +36,21 @@ add_executable(
     expressions/ident_expression.cpp
 
     statements/assign_state.cpp
+    statements/decl_state.cpp
     statements/statements_list.cpp
     statements/if_state.cpp
     statements/while_state.cpp
     statements/print_state.cpp
+
+    logic/eq_log.cpp
+    logic/neq_log.cpp
+    logic/g_log.cpp
+    logic/l_log.cpp
+    logic/geq_log.cpp
+    logic/leq_log.cpp
+
+    visitors/interpreter.cpp
+    visitors/printer.cpp
     
     program.cpp
 )

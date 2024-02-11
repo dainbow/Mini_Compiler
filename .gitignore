@@ -6,6 +6,8 @@
 *.png
 
 build/
+.cache/
+bin/
 # Prerequisites
 *.d
 

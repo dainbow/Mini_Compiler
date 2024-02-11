@@ -60,6 +60,12 @@
     SUB "-"
     MUL "*"
     DIV "/"
+    L "<"
+    G ">"
+    LEQ "<="
+    GEQ ">="
+    EQ "=="
+    NEQ "!="
 ;
 
 %token <std::string> IDENTIFIER "identifier"
@@ -95,21 +101,27 @@ statements_list:
         $$ = $1;
     };
 
-statements: "declare" "identifier" ";" { $$ = new VarDeclState($2); }
-|  "{" statements_list "}" { $$ = $2 }
-|  "if" "(" expression ")" statements { $$ = new IfState($3, $5, {}); }
-|  "if" "(" expression ")" statements "else" statements { $$ = new IfState($3, $5, $7); }
-|  "while" "(" expression ")" statements { $$ = new WhileState($3, $5); }
-|  "print" "(" expression ")" ";" { $$ = new PrintState("print", $3); }
+statements: "declare" "identifier" ";" { $$ = new DeclState($2); }
+|  "{" statements_list "}" { $$ = $2; }
+|  "if" "(" expression ")" statements_list { $$ = new IfState($3, $5, {}); }
+|  "if" "(" expression ")" statements_list "else" statements_list { $$ = new IfState($3, $5, $7); }
+|  "while" "(" expression ")" statements_list { $$ = new WhileState($3, $5); }
+|  "print" "(" expression ")" ";" { $$ = new PrintState($3); }
 |  "identifier" "=" expression ";" { $$ = new AssignState($1, $3); };
 
 expression: "number" { $$ = new NumberExpression($1); }
 | "identifier" {$$ = new IdentExpression($1); }
-| "-" expression { $$ = new NegateExpression($2); }
+| "-" expression { $$ = new NegExpression($2); }
 | expression "+" expression {$$ = new AddExpression($1, $3); }
 | expression "-" expression {$$ = new AddExpression($1, new NegExpression($3)); }
 | expression "*" expression {$$ = new MulExpression($1, $3); }
 | expression "/" expression {$$ = new DivExpression($1, $3); }
+| expression "<" expression {$$ = new LLogic($1, $3); }
+| expression ">" expression {$$ = new GLogic($1, $3); }
+| expression "<=" expression {$$ = new LeqLogic($1, $3); }
+| expression ">=" expression {$$ = new GeqLogic($1, $3); }
+| expression "==" expression {$$ = new EqLogic($1, $3); }
+| expression "!=" expression {$$ = new NeqLogic($1, $3); }
 | "(" expression ")" {$$ = $2; };
 
 %%

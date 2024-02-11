@@ -11,6 +11,7 @@ class AssignState;
 class IfState;
 class PrintState;
 class WhileState;
+class DeclState;
 
 class Expression;
 class AddExpression;
@@ -19,3 +20,10 @@ class NegExpression;
 class MulExpression;
 class IdentExpression;
 class DivExpression;
+
+class LLogic;
+class GLogic;
+class LeqLogic;
+class GeqLogic;
+class EqLogic;
+class NeqLogic;

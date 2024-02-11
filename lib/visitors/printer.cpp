@@ -6,6 +6,10 @@
 
 Printer::Printer(const std::string& filename) : stream_(filename) {}
 
+Printer::~Printer() {
+  stream_.close();
+}
+
 void Printer::Visit(Program* program) {
   stream_ << "Program:" << std::endl;
 
@@ -70,6 +74,11 @@ void Printer::Visit(WhileState* whileState) {
   --num_tabs_;
 }
 
+void Printer::Visit(DeclState* declState) {
+  PrintTabs();
+  stream_ << "Declare " << declState->variable_ << std::endl;
+}
+
 void Printer::Visit(AddExpression* addExpr) {
   PrintTabs();
   stream_ << "AddExpression is:" << std::endl;
@@ -117,4 +126,68 @@ void Printer::Visit(DivExpression* divExpr) {
   divExpr->first_->Accept(this);
   divExpr->second_->Accept(this);
   --num_tabs_;
+}
+
+void Printer::Visit(LLogic* log) {
+  PrintTabs();
+  stream_ << "LessLogic is:" << std::endl;
+
+  ++num_tabs_;
+  log->first_->Accept(this);
+  log->second_->Accept(this);
+  --num_tabs_;
+}
+
+void Printer::Visit(GLogic* log) {
+  PrintTabs();
+  stream_ << "GreaterLogic is:" << std::endl;
+
+  ++num_tabs_;
+  log->first_->Accept(this);
+  log->second_->Accept(this);
+  --num_tabs_;
+}
+
+void Printer::Visit(LeqLogic* log) {
+  PrintTabs();
+  stream_ << "LessEqLogic is:" << std::endl;
+
+  ++num_tabs_;
+  log->first_->Accept(this);
+  log->second_->Accept(this);
+  --num_tabs_;
+}
+
+void Printer::Visit(GeqLogic* log) {
+  PrintTabs();
+  stream_ << "GreaterEqLogic is:" << std::endl;
+
+  ++num_tabs_;
+  log->first_->Accept(this);
+  log->second_->Accept(this);
+  --num_tabs_;
+}
+
+void Printer::Visit(EqLogic* log) {
+  PrintTabs();
+  stream_ << "EqualLogic is:" << std::endl;
+
+  ++num_tabs_;
+  log->first_->Accept(this);
+  log->second_->Accept(this);
+  --num_tabs_;
+}
+
+void Printer::Visit(NeqLogic* log) {
+  PrintTabs();
+  stream_ << "NonEqualLogic is:" << std::endl;
+
+  ++num_tabs_;
+  log->first_->Accept(this);
+  log->second_->Accept(this);
+  --num_tabs_;
+}
+
+void Printer::PrintTabs() {
+  stream_ << std::string(num_tabs_, '\t');
 }

@@ -12,10 +12,9 @@ int main(int argc, char** argv) {
         } else if (argv[i] == std::string("-s")) {
             driver.trace_scanning = true;
         } else {
-
             driver.parse(argv[i]);
-            std::cout << driver.Evaluate() << std::endl;
-
+            
+            driver.Evaluate();
             driver.PrintTree(argv[i + 1]);
             ++i;
         }
