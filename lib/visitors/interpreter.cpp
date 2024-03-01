@@ -13,7 +13,7 @@ Interpreter::Interpreter(ScopeLayer* root, std::vector<int> params)
       is_returned_(false),
       return_value_(0) {}
 
-void Interpreter::Visit(Program* program) {
+void Interpreter::Visit(Program*) {
   GetFunction("main")->Accept(this);
 }
 
@@ -68,7 +68,7 @@ void Interpreter::Visit(WhileState* whileState) {
   }
 }
 
-void Interpreter::Visit(DeclState* declState) {}
+void Interpreter::Visit(DeclState*) {}
 
 void Interpreter::Visit(Function* function) {
   if (function->params_list_->params_.size() != params_.size()) {
@@ -81,11 +81,11 @@ void Interpreter::Visit(Function* function) {
   function->statements_->Accept(this);
 }
 
-void Interpreter::Visit(FunctionsList* function_list) {}
+void Interpreter::Visit(FunctionsList*) {}
 
-void Interpreter::Visit(ParamsList* value_list) {}
+void Interpreter::Visit(ParamsList*) {}
 
-void Interpreter::Visit(ExpressionsList* param_list) {}
+void Interpreter::Visit(ExpressionsList*) {}
 
 void Interpreter::Visit(AddExpression* addExpr) {
   last_value_ = Eval(addExpr->first_) + Eval(addExpr->second_);

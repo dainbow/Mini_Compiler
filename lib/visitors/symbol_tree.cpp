@@ -85,7 +85,7 @@ void SymbolTree::Visit(AddExpression* addExpr) {
   addExpr->second_->Accept(this);
 }
 
-void SymbolTree::Visit(NumberExpression* numExpr) {}
+void SymbolTree::Visit(NumberExpression*) {}
 
 void SymbolTree::Visit(NegExpression* negExpr) {
   negExpr->first_->Accept(this);

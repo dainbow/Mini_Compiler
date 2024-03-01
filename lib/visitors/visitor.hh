@@ -34,4 +34,6 @@ class Visitor {
   virtual void Visit(GeqLogic* log) = 0;
   virtual void Visit(EqLogic* log) = 0;
   virtual void Visit(NeqLogic* log) = 0;
+
+  virtual ~Visitor() = default;
 };
