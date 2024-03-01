@@ -3,6 +3,7 @@
 
 #include "visitors/interpreter.hh"
 #include "visitors/printer.hh"
+#include "visitors/symbol_tree.hh"
 
 Driver::Driver()
     : trace_parsing(false),
@@ -22,7 +23,11 @@ int Driver::parse(const std::string& f) {
 }
 
 void Driver::Evaluate() {
-  Interpreter interpreter;
+  SymbolTree visitor;
+  visitor.Visit(program);
+
+  ScopeLayer* root = visitor.GetRoot();
+  Interpreter interpreter(root, {});
   interpreter.Visit(program);
 }
 

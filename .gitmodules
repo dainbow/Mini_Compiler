@@ -1,0 +1,6 @@
+[submodule "externals/cmake-scripts"]
+	path = externals/cmake-scripts
+	url = git@github.com:StableCoder/cmake-scripts.git
+[submodule "externals/cmake-modules"]
+	path = externals/cmake-modules
+	url = https://github.com/bilke/cmake-modules

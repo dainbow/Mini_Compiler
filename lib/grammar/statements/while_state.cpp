@@ -1,6 +1,6 @@
 #include "while_state.hh"
 
-WhileState::WhileState(Expression* expression, StatementsList* cond)
+WhileState::WhileState(Expression* expression, Statement* cond)
     : expression_(expression), cond_(cond) {}
 
 void WhileState::Accept(Visitor* visitor) {

@@ -1,14 +1,12 @@
 #pragma once
 
+#include "symbol_table/scope_layer.hh"
 #include "visitor.hh"
 
-#include <fstream>
-#include <string>
-
-class Printer : public Visitor {
+class SymbolTree : public Visitor {
  public:
-  Printer(const std::string& filename);
-  ~Printer();
+  SymbolTree();
+  ~SymbolTree() = default;
 
   virtual void Visit(Program* program) override;
   virtual void Visit(StatementsList* program) override;
@@ -40,8 +38,9 @@ class Printer : public Visitor {
   virtual void Visit(EqLogic* log) override;
   virtual void Visit(NeqLogic* log) override;
 
+  ScopeLayer* GetRoot();
+
  private:
-  void PrintTabs();
-  std::ofstream stream_;
-  int num_tabs_ = 0;
+  ScopeLayer* root_;
+  ScopeLayer* current_layer_;
 };

@@ -1,6 +1,6 @@
 #include "printer.hh"
 
-#include "../elements.hh"
+#include "elements.hh"
 
 #include <iostream>
 
@@ -14,7 +14,7 @@ void Printer::Visit(Program* program) {
   stream_ << "Program:" << std::endl;
 
   ++num_tabs_;
-  program->statements_->Accept(this);
+  program->functions_->Accept(this);
   --num_tabs_;
 }
 
@@ -25,6 +25,14 @@ void Printer::Visit(StatementsList* statements_list) {
     --num_tabs_;
     stream_ << ";" << std::endl;
   }
+}
+
+void Printer::Visit(ScopeStatements* scope) {
+  stream_ << "ScopeStatements:" << std::endl;
+
+  ++num_tabs_;
+  scope->statements_->Accept(this);
+  --num_tabs_;
 }
 
 void Printer::Visit(AssignState* assignment) {
@@ -61,6 +69,15 @@ void Printer::Visit(PrintState* printState) {
   --num_tabs_;
 }
 
+void Printer::Visit(ReturnState* returnState) {
+  PrintTabs();
+  stream_ << "ReturnStatement:" << std::endl;
+
+  ++num_tabs_;
+  returnState->return_expression_->Accept(this);
+  --num_tabs_;
+}
+
 void Printer::Visit(WhileState* whileState) {
   PrintTabs();
   stream_ << "While: " << std::endl;
@@ -77,6 +94,55 @@ void Printer::Visit(WhileState* whileState) {
 void Printer::Visit(DeclState* declState) {
   PrintTabs();
   stream_ << "Declare " << declState->variable_ << std::endl;
+}
+
+void Printer::Visit(Function* function) {
+  PrintTabs();
+  stream_ << "Function:" << std::endl;
+
+  ++num_tabs_;
+
+  PrintTabs();
+  stream_ << "Name: " << function->name_ << std::endl;
+  function->params_list_->Accept(this);
+  function->statements_->Accept(this);
+  --num_tabs_;
+}
+
+void Printer::Visit(FunctionsList* function_list) {
+  PrintTabs();
+  stream_ << "FunctionList:" << std::endl;
+
+  ++num_tabs_;
+  for (auto* function : function_list->functions_) {
+    function->Accept(this);
+  }
+  --num_tabs_;
+}
+
+void Printer::Visit(ParamsList* value_list) {
+  PrintTabs();
+  stream_ << "ParamList:" << std::endl;
+
+  ++num_tabs_;
+
+  for (const std::string& param : value_list->params_) {
+    PrintTabs();
+    stream_ << param << std::endl;
+  }
+  --num_tabs_;
+}
+
+void Printer::Visit(ExpressionsList* param_list) {
+  PrintTabs();
+  stream_ << "ParamValueList:" << std::endl;
+
+  ++num_tabs_;
+
+  for (Expression* param : param_list->expressions_) {
+    param->Accept(this);
+  }
+  --num_tabs_;
 }
 
 void Printer::Visit(AddExpression* addExpr) {
@@ -100,6 +166,17 @@ void Printer::Visit(NegExpression* negExpr) {
 
   ++num_tabs_;
   negExpr->first_->Accept(this);
+  --num_tabs_;
+}
+
+void Printer::Visit(CallExpression* calling) {
+  PrintTabs();
+  stream_ << "CallStatement:" << std::endl;
+  ++num_tabs_;
+
+  PrintTabs();
+  stream_ << "Name: " << calling->name_ << std::endl;
+  calling->params_list_->Accept(this);
   --num_tabs_;
 }
 

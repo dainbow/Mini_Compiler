@@ -1,69 +1,37 @@
-project(Visitor)
+project(Compiler)
+
+set(CURRENT_EXECUTABLE "${PROJECT_NAME}Executable")
+set(GRAMMAR_LIB "${PROJECT_NAME}GrammarLib")
+set(GRAMMAR_PROJECT "${PROJECT_NAME}GrammarProject")
+
 set(
-    HEADERS
-    driver.hh
-    parser.hh
-    )
+    SOURCES
 
-BISON_TARGET(
-    ParserVisitor
-    parser.y
-    ${Visitor_SOURCE_DIR}/parser.cpp
-    COMPILE_FLAGS --graph
-    DEFINES_FILE ${Visitor_SOURCE_DIR}/parser.hh
-)
+    types/func_type.cpp
+    types/type.cpp
+    types/frame_idx_type.cpp
 
-FLEX_TARGET(
-    ScannerVisitor
-    scanner.l
-    ${Visitor_SOURCE_DIR}/scanner.cpp
-)
-
-ADD_FLEX_BISON_DEPENDENCY(ScannerVisitor ParserVisitor)
-
-add_executable(
-    VisitorExecutable
-    main.cpp
-    driver.cpp
-    ${BISON_ParserVisitor_OUTPUTS}
-    ${FLEX_ScannerVisitor_OUTPUTS}
-
-    expressions/number_expression.cpp
-    expressions/add_expression.cpp
-    expressions/mul_expression.cpp
-    expressions/div_expression.cpp
-    expressions/neg_expression.cpp
-    expressions/ident_expression.cpp
-
-    statements/assign_state.cpp
-    statements/decl_state.cpp
-    statements/statements_list.cpp
-    statements/if_state.cpp
-    statements/while_state.cpp
-    statements/print_state.cpp
-
-    logic/eq_log.cpp
-    logic/neq_log.cpp
-    logic/g_log.cpp
-    logic/l_log.cpp
-    logic/geq_log.cpp
-    logic/leq_log.cpp
+    symbol_table/scope_layer.cpp
 
     visitors/interpreter.cpp
     visitors/printer.cpp
-    
-    program.cpp
+    visitors/symbol_tree.cpp
+    visitors/template.cpp
+)
+
+add_subdirectory(grammar)
+
+add_executable(
+    ${CURRENT_EXECUTABLE}
+    main.cpp
+    ${SOURCES}
 )
 
 target_include_directories(
-    VisitorExecutable PRIVATE ${Visitor_SOURCE_DIR}
+    ${CURRENT_EXECUTABLE} PRIVATE ${PROJECT_SOURCE_DIR}
+)
+target_include_directories(
+    ${CURRENT_EXECUTABLE} PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/grammar
 )
 
-add_custom_target(
-    VisitorTree
-    COMMAND dot -Tpng ${Visitor_SOURCE_DIR}/parser.gv -o ${Visitor_SOURCE_DIR}/parser.png
-    
-    DEPENDS ${Visitor_SOURCE_DIR}/parser.cpp
-)
-
-add_dependencies(VisitorExecutable VisitorTree)
+target_link_libraries(${CURRENT_EXECUTABLE} ${GRAMMAR_LIB})

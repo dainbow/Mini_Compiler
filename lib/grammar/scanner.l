@@ -46,12 +46,10 @@ blank [ \t\r]
 ")"        return yy::parser::make_RPAREN (loc);
 "{"        return yy::parser::make_LBRACE (loc);
 "}"        return yy::parser::make_RBRACE (loc);
-"["        return yy::parser::make_LARR (loc);
-"]"        return yy::parser::make_RARR (loc);
+","        return yy::parser::make_COMMA(loc);
+"def"      return yy::parser::make_DEF(loc);
 ";"        return yy::parser::make_SEMICOLON (loc);
-":"        return yy::parser::make_DDOTS (loc);
 "="        return yy::parser::make_ASSIGN (loc);
-"main"     return yy::parser::make_MAIN (loc);
 "declare"  return yy::parser::make_DECL (loc);
 "if"       return yy::parser::make_IF (loc);
 "else"     return yy::parser::make_ELSE (loc);

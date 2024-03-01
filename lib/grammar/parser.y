@@ -44,12 +44,8 @@
     RPAREN ")"
     LBRACE "{"
     RBRACE "}"
-    LARR "["
-    RARR "]"
     SEMICOLON ";"
-    DDOTS ":"
     ASSIGN "="
-    MAIN "main"
     DECL "declare"
     IF "if"
     ELSE "else"
@@ -66,18 +62,31 @@
     GEQ ">="
     EQ "=="
     NEQ "!="
+    COMMA ","
+    DEF "def"
 ;
 
 %token <std::string> IDENTIFIER "identifier"
 %token <int> NUMBER "number"
 
+%nterm <FunctionsList*> functions_list
+
+%nterm <Function*> function_def
+
+%nterm <ParamsList*> params_list
+%nterm <ParamsList*> empty_params_list
+%nterm <ParamsList*> complex_params_list
+
+%nterm <ExpressionsList*> expressions_list
+%nterm <ExpressionsList*> empty_expressions_list
+%nterm <ExpressionsList*> complex_expressions_list
+
 %nterm <Program*> program
 
-%nterm <Statement*> statements
-%nterm <Expression*> expression
-
+%nterm <Statement*> statement
 %nterm <StatementsList*> statements_list
-%nterm <StatementsList*> main
+
+%nterm <Expression*> expression
 
 // Prints output in parsing option for debugging location terminal
 %printer { yyo << $$; } <*>;
@@ -85,29 +94,50 @@
 %%
 %start program;
 
-program: main {
+program: functions_list {
         $$ = new Program($1);
         driver.program = $$;
     };
 
-main: "main" "(" ")" "{" statements_list "}"  {
-      $$ = $5;
+functions_list:
+    %empty { $$ = new FunctionsList(); }
+    | functions_list function_def {
+        $1->AddFunction($2); $$ = $1;
     };
+
+function_def:
+    "def" "identifier" "(" params_list ")" "{" statements_list "}" { $$ = new Function($2, $4, new ScopeStatements($7)); };
+
+params_list:
+    empty_params_list {$$ = $1;} /* def foo () {}*/
+    | complex_params_list {$$ = $1;} /* def foo(a, b, c) {} */
+    ;
+
+empty_params_list:
+    %empty { $$ = new ParamsList();}
+    ;
+
+complex_params_list:
+    "identifier" {$$ = new ParamsList($1);}
+    | complex_params_list "," "identifier" { $1->AddParam($3); $$ = $1; }
+    ;
 
 statements_list: 
     %empty { $$ = new StatementsList(); /* A -> eps */}
-    | statements_list statements {
+    | statements_list statement {
         $1->AddStatement($2); 
         $$ = $1;
     };
 
-statements: "declare" "identifier" ";" { $$ = new DeclState($2); }
-|  "{" statements_list "}" { $$ = $2; }
-|  "if" "(" expression ")" statements_list { $$ = new IfState($3, $5, {}); }
-|  "if" "(" expression ")" statements_list "else" statements_list { $$ = new IfState($3, $5, $7); }
-|  "while" "(" expression ")" statements_list { $$ = new WhileState($3, $5); }
+statement: "declare" "identifier" ";" { $$ = new DeclState($2); }
+|  "{" statements_list "}" { $$ = new ScopeStatements($2); }
+|  "if" "(" expression ")" statement { $$ = new IfState($3, $5, new StatementsList()); }
+|  "if" "(" expression ")" statement "else" statement { $$ = new IfState($3, $5, $7); }
+|  "while" "(" expression ")" statement { $$ = new WhileState($3, $5); }
 |  "print" "(" expression ")" ";" { $$ = new PrintState($3); }
-|  "identifier" "=" expression ";" { $$ = new AssignState($1, $3); };
+|  "identifier" "=" expression ";" { $$ = new AssignState($1, $3); }
+|  "return" expression ";" {$$ = new ReturnState($2); }
+;
 
 expression: "number" { $$ = new NumberExpression($1); }
 | "identifier" {$$ = new IdentExpression($1); }
@@ -122,7 +152,24 @@ expression: "number" { $$ = new NumberExpression($1); }
 | expression ">=" expression {$$ = new GeqLogic($1, $3); }
 | expression "==" expression {$$ = new EqLogic($1, $3); }
 | expression "!=" expression {$$ = new NeqLogic($1, $3); }
+| "identifier" "(" expressions_list ")"  {$$ = new CallExpression($1, $3); }
 | "(" expression ")" {$$ = $2; };
+
+expressions_list:
+    empty_expressions_list {$$ = $1;} /* foo () {}*/
+    | complex_expressions_list {
+        $$ = $1;
+      } /* foo(a, b, c) {} */
+    ;
+
+empty_expressions_list:
+    %empty { $$ = new ExpressionsList();}
+    ;
+
+complex_expressions_list: 
+    expression {$$ = new ExpressionsList($1);}
+    | complex_expressions_list "," expression { $1->AddExpression($3); $$ = $1; }
+    ;
 
 %%
 

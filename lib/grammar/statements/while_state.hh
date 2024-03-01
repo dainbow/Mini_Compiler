@@ -4,10 +4,10 @@
 #include "statement.hh"
 
 class WhileState : public Statement {
-public:
-  WhileState(Expression* expression, StatementsList* cond);
+ public:
+  WhileState(Expression* expression, Statement* cond);
   void Accept(Visitor* visitor);
 
   Expression* expression_;
-  StatementsList* cond_;
+  Statement* cond_;
 };

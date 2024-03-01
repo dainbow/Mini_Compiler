@@ -5,16 +5,24 @@ class Driver;
 
 class Program;
 
+class Function;
+class FunctionsList;
+class ExpressionsList;
+class ParamsList;
+
 class Statement;
 class StatementsList;
+class ScopeStatements;
 class AssignState;
 class IfState;
 class PrintState;
+class ReturnState;
 class WhileState;
 class DeclState;
 
 class Expression;
 class AddExpression;
+class CallExpression;
 class NumberExpression;
 class NegExpression;
 class MulExpression;
