@@ -51,6 +51,7 @@
     ELSE "else"
     WHILE "while"
     PRINT "print"
+    INPUT "input"
     RET "return"
     ADD "+"
     SUB "-"
@@ -135,6 +136,7 @@ statement: "declare" "identifier" ";" { $$ = new DeclState($2); }
 |  "if" "(" expression ")" statement "else" statement { $$ = new IfState($3, $5, $7); }
 |  "while" "(" expression ")" statement { $$ = new WhileState($3, $5); }
 |  "print" "(" expression ")" ";" { $$ = new PrintState($3); }
+|  "input" "(" "identifier" ")" ";" { $$ = new InputState($3); }
 |  "identifier" "=" expression ";" { $$ = new AssignState($1, $3); }
 |  "return" expression ";" {$$ = new ReturnState($2); }
 ;

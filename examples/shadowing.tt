@@ -1,0 +1,31 @@
+def fact(n) {
+  if (n == 0) {
+    return 1;
+  }
+
+  return n * fact(n - 1);
+}
+
+def main() {
+  declare a;
+  a = 0;
+
+  while (a < 8) {
+    print(fact(a));
+
+    if (a == 0) {
+      declare a;
+      a = 228;
+
+      print(a);
+    }
+    else if (a == 1) {
+      declare a;
+      a = 322;
+
+      print(a);
+    }
+
+    a = a + 1;
+  }
+}

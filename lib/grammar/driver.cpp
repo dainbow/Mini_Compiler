@@ -2,6 +2,7 @@
 #include "parser.hh"
 
 #include "visitors/interpreter.hh"
+#include "visitors/ir_builder.hh"
 #include "visitors/printer.hh"
 #include "visitors/symbol_tree.hh"
 
@@ -29,6 +30,15 @@ void Driver::Evaluate() {
   ScopeLayer* root = visitor.GetRoot();
   Interpreter interpreter(root, {});
   interpreter.Visit(program);
+}
+
+void Driver::PrintIR(const std::string& filename) {
+  SymbolTree visitor;
+  visitor.Visit(program);
+
+  ScopeLayer* root = visitor.GetRoot();
+  IrBuilderVisitor ir_builder(root, filename);
+  ir_builder.Visit(program);
 }
 
 void Driver::scan_begin() {

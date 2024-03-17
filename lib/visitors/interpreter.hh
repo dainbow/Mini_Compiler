@@ -1,5 +1,6 @@
 #pragma once
 
+#include "support/frame.hh"
 #include "symbol_table/scope_layer.hh"
 #include "template.hh"
 #include "types/func_type.hh"
@@ -16,6 +17,7 @@ class Interpreter : public TemplateVisitor<int> {
   virtual void Visit(AssignState* assignment) override;
   virtual void Visit(IfState* ifState) override;
   virtual void Visit(PrintState* printState) override;
+  virtual void Visit(InputState* input_state) override;
   virtual void Visit(ReturnState* returnState) override;
   virtual void Visit(WhileState* whileState) override;
   virtual void Visit(DeclState* declState) override;
@@ -41,13 +43,7 @@ class Interpreter : public TemplateVisitor<int> {
   virtual void Visit(NeqLogic* log) override;
 
  private:
-  Function* GetFunction(const std::string& name);
-
-  ScopeLayer* root_;
-  ScopeLayer* current_layer_;
-
-  // TODO Frame class
-  std::vector<int> frame_;
+  Frame<int> frame_;
 
   // Caller class
   std::vector<int> params_;

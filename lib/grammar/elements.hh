@@ -17,6 +17,7 @@
 #include "statements/assign_state.hh"
 #include "statements/decl_state.hh"
 #include "statements/if_state.hh"
+#include "statements/input_state.hh"
 #include "statements/print_state.hh"
 #include "statements/return_state.hh"
 #include "statements/scope_statements.hh"

@@ -1,22 +1,39 @@
 #include "driver.hh"
+#include "llvm/Support/CommandLine.h"
+
+using namespace llvm::cl;
+
+opt<bool> TraceParsing("p", desc("Enable verbose parsing"), init(false));
+opt<bool> TraceScanning("s", desc("Enable verbose scanning"), init(false));
+
+opt<std::string> InputFilename(Positional, Required, desc("<input file>"));
+
+opt<std::string> TreeDumpFilename("tree",
+                                  desc("Name for file with AST tree dump"),
+                                  value_desc("filename"), init(""));
+
+opt<std::string> EmitLLVMFilename(
+    "emit-llvm",
+    desc("Specify if you want generate IR, otherwise interpretate"),
+    value_desc("filename"), init(""));
 
 int main(int argc, char** argv) {
-  int result = 0;
+  ParseCommandLineOptions(argc, argv);
+
   Driver driver;
 
-  for (int i = 1; i < argc; ++i) {
-    if (argv[i] == std::string("-p")) {
-      driver.trace_parsing = true;
-    } else if (argv[i] == std::string("-s")) {
-      driver.trace_scanning = true;
-    } else {
-      driver.parse(argv[i]);
+  driver.trace_parsing = TraceParsing;
+  driver.trace_scanning = TraceScanning;
 
-      driver.Evaluate();
-      driver.PrintTree(argv[i + 1]);
-      ++i;
-    }
+  driver.parse(InputFilename);
+
+  if (EmitLLVMFilename.empty()) {
+    driver.Evaluate();
+  } else {
+    driver.PrintIR(EmitLLVMFilename);
   }
 
-  return result;
+  if (!TreeDumpFilename.empty()) {
+    driver.PrintTree(TreeDumpFilename);
+  }
 }

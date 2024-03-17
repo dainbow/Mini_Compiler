@@ -69,6 +69,11 @@ void Printer::Visit(PrintState* printState) {
   --num_tabs_;
 }
 
+void Printer::Visit(InputState* input_state) {
+  PrintTabs();
+  stream_ << "Input: " << input_state->var_name_ << std::endl;
+}
+
 void Printer::Visit(ReturnState* returnState) {
   PrintTabs();
   stream_ << "ReturnStatement:" << std::endl;

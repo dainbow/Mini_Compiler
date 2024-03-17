@@ -1,10 +1,6 @@
 #include "frame_idx_type.hh"
 
-FrameIdxType::FrameIdxType(int value) : value_(value) {}
-
-Type FrameIdxType::GetType() {
-  return Type::FrameIdxType;
-}
+FrameIdxType::FrameIdxType(size_t value) : value_(value) {}
 
 size_t FrameIdxType::GetIdx() {
   return value_;

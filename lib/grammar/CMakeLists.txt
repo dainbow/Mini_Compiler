@@ -56,6 +56,7 @@ set(
   statements/scope_statements.cpp
   statements/if_state.cpp
   statements/return_state.cpp
+  statements/input_state.cpp
   statements/while_state.cpp
   statements/print_state.cpp
 

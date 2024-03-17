@@ -1,8 +1,10 @@
 #include "symbol_tree.hh"
 #include "elements.hh"
 #include "types/frame_idx_type.hh"
+#include "types/func_type.hh"
 
-SymbolTree::SymbolTree() : root_(new ScopeLayer()), current_layer_(root_) {}
+SymbolTree::SymbolTree()
+    : root_(new ScopeLayer()), current_layer_(root_), scope_sizes_() {}
 
 void SymbolTree::Visit(Program* program) {
   program->functions_->Accept(this);
@@ -15,15 +17,13 @@ void SymbolTree::Visit(StatementsList* statements_list) {
 }
 
 void SymbolTree::Visit(ScopeStatements* scope) {
-  auto new_layer = new ScopeLayer(current_layer_, scope);
-
-  current_layer_ = new_layer;
+  current_layer_ = new ScopeLayer(current_layer_, scope);
   scope->statements_->Accept(this);
   current_layer_ = current_layer_->GetParent();
 }
 
 void SymbolTree::Visit(AssignState* assignment) {
-  DYNAMIC_GET(FrameIdxType, current_layer_, assignment->variable_);
+  current_layer_->DynamicGet<FrameIdxType>(assignment->variable_);
 
   assignment->expression_->Accept(this);
 }
@@ -38,6 +38,10 @@ void SymbolTree::Visit(PrintState* printState) {
   printState->expression_->Accept(this);
 }
 
+void SymbolTree::Visit(InputState* input_state) {
+  current_layer_->DynamicGet<FrameIdxType>(input_state->var_name_);
+}
+
 void SymbolTree::Visit(ReturnState* returnState) {
   returnState->return_expression_->Accept(this);
 }
@@ -48,11 +52,11 @@ void SymbolTree::Visit(WhileState* whileState) {
 }
 
 void SymbolTree::Visit(DeclState* declState) {
-  current_layer_->DeclareVariable(declState->variable_);
+  DeclareVariable(declState->variable_);
 }
 
 void SymbolTree::Visit(Function* function) {
-  current_layer_->DeclareFunction(function->name_, function);
+  DeclareFunction(function->name_, function);
 
   current_layer_ = new ScopeLayer(current_layer_, function->statements_);
 
@@ -70,7 +74,7 @@ void SymbolTree::Visit(FunctionsList* function_list) {
 
 void SymbolTree::Visit(ParamsList* value_list) {
   for (auto& param : value_list->params_) {
-    current_layer_->DeclareVariable(param);
+    DeclareVariable(param);
   }
 }
 
@@ -102,7 +106,7 @@ void SymbolTree::Visit(MulExpression* mulExpr) {
 }
 
 void SymbolTree::Visit(IdentExpression* identExpr) {
-  DYNAMIC_GET(FrameIdxType, current_layer_, identExpr->ident_);
+  current_layer_->DynamicGet<FrameIdxType>(identExpr->ident_);
 }
 
 void SymbolTree::Visit(DivExpression* divExpr) {
@@ -142,4 +146,13 @@ void SymbolTree::Visit(NeqLogic* log) {
 
 ScopeLayer* SymbolTree::GetRoot() {
   return root_;
+}
+
+void SymbolTree::DeclareVariable(Symbol symbol) {
+  current_layer_->Declare(
+      symbol, std::make_shared<FrameIdxType>(++scope_sizes_[current_layer_]));
+}
+
+void SymbolTree::DeclareFunction(Symbol symbol, Function* function) {
+  current_layer_->Declare(symbol, std::make_shared<FuncType>(function));
 }

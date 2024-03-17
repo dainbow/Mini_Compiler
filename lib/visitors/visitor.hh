@@ -12,6 +12,7 @@ class Visitor {
   virtual void Visit(DeclState* decl_state) = 0;
   virtual void Visit(IfState* if_state) = 0;
   virtual void Visit(PrintState* print_state) = 0;
+  virtual void Visit(InputState* input_state) = 0;
   virtual void Visit(ReturnState* return_state) = 0;
   virtual void Visit(WhileState* while_state) = 0;
 

@@ -5,9 +5,8 @@
 
 class FrameIdxType : public BasicType {
  public:
-  explicit FrameIdxType(int value);
+  explicit FrameIdxType(size_t value);
 
-  virtual Type GetType() override;
   size_t GetIdx();
 
  private:

@@ -55,6 +55,7 @@ blank [ \t\r]
 "else"     return yy::parser::make_ELSE (loc);
 "while"    return yy::parser::make_WHILE  (loc);
 "print"    return yy::parser::make_PRINT   (loc);
+"input"    return yy::parser::make_INPUT   (loc);
 "return"   return yy::parser::make_RET   (loc);
 "+"        return yy::parser::make_ADD (loc);
 "-"        return yy::parser::make_SUB (loc);

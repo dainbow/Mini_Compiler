@@ -16,6 +16,7 @@ class ScopeStatements;
 class AssignState;
 class IfState;
 class PrintState;
+class InputState;
 class ReturnState;
 class WhileState;
 class DeclState;

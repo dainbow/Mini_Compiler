@@ -8,7 +8,6 @@
 class FuncType : public BasicType {
  public:
   explicit FuncType(Function* function);
-  virtual Type GetType() override;
 
   size_t GetArgsAmount();
   Function* GetFunction();

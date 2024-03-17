@@ -13,16 +13,33 @@ class ScopeLayer {
   ScopeLayer(ScopeLayer* parent, ScopeStatements* my_scope);
   ScopeLayer();
 
-  void DeclareVariable(Symbol symbol);
-  void DeclareFunction(Symbol symbol, Function* params);
+  void Declare(Symbol symbol, std::shared_ptr<BasicType> value);
 
   std::shared_ptr<BasicType> Get(Symbol symbol);
-#define DYNAMIC_GET(type, instance, symbol)                \
-  (assert(instance->Get(symbol)->GetType() == Type::type), \
-   dynamic_cast<type*>(instance->Get(symbol).get()))
+
+  template <typename T>
+  T* DynamicGet(Symbol symbol) {
+    T* res = dynamic_cast<T*>(Get(symbol).get());
+    assert(res);
+
+    return res;
+  }
+
+  template <typename T>
+  size_t GetValuesAmount() {
+    size_t counter = 0;
+    
+    for (auto& val : values_) {
+      if (dynamic_cast<T*>(val.second.get())) {
+        counter++;
+      }
+    }
+
+    return counter;
+  }
 
   bool Has(const Symbol& symbol);
-  size_t GetSize();
+  ScopeStatements* AsStatements();
 
   void AddChild(ScopeLayer* child, ScopeStatements* child_scope);
 
@@ -33,10 +50,9 @@ class ScopeLayer {
   void Put(Symbol symbol, std::shared_ptr<BasicType> value);
 
   std::shared_ptr<BasicType>& Find(Symbol symbol);
-
-  size_t scope_size_;
   std::unordered_map<Symbol, std::shared_ptr<BasicType>> values_;
 
+  ScopeStatements* statements_;
   ScopeLayer* parent_;
   std::unordered_map<ScopeStatements*, ScopeLayer*> children_;
 };

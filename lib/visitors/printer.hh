@@ -16,6 +16,7 @@ class Printer : public Visitor {
   virtual void Visit(AssignState* assignment) override;
   virtual void Visit(IfState* ifState) override;
   virtual void Visit(PrintState* printState) override;
+  virtual void Visit(InputState* input_state) override;
   virtual void Visit(ReturnState* returnState) override;
   virtual void Visit(WhileState* whileState) override;
   virtual void Visit(DeclState* declState) override;

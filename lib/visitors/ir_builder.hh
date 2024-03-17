@@ -1,12 +1,17 @@
 #pragma once
 
-#include "symbol_table/scope_layer.hh"
-#include "visitor.hh"
+#include "llvm/IR/IRBuilder.h"
 
-class SymbolTree : public Visitor {
+#include "support/frame.hh"
+#include "symbol_table/scope_layer.hh"
+#include "template.hh"
+#include "types/func_type.hh"
+
+#include <stack>
+
+class IrBuilderVisitor : public TemplateVisitor<llvm::Value*> {
  public:
-  SymbolTree();
-  ~SymbolTree() = default;
+  explicit IrBuilderVisitor(ScopeLayer* root, const std::string& output);
 
   virtual void Visit(Program* program) override;
   virtual void Visit(StatementsList* program) override;
@@ -39,14 +44,12 @@ class SymbolTree : public Visitor {
   virtual void Visit(EqLogic* log) override;
   virtual void Visit(NeqLogic* log) override;
 
-  ScopeLayer* GetRoot();
-
  private:
-  void DeclareVariable(Symbol symbol);
-  void DeclareFunction(Symbol symbol, Function* function);
+  llvm::LLVMContext context_;
+  llvm::Module* module_;
+  llvm::IRBuilder<> builder_;
+  llvm::Function* current_function_;
 
-  ScopeLayer* root_;
-
-  ScopeLayer* current_layer_;
-  std::unordered_map<ScopeLayer*, size_t> scope_sizes_;
+  Frame<llvm::Value*> frame_;
+  std::string output_file_;
 };
