@@ -77,7 +77,7 @@ void IrBuilderVisitor::Visit(IfState* ifState) {
 void IrBuilderVisitor::Visit(PrintState* printState) {
   static auto* format = builder_.CreateGlobalStringPtr("%d\n");
 
-  std::vector<llvm::Type*> print_args_types = {builder_.getInt8PtrTy(),
+  std::vector<llvm::Type*> print_args_types = {builder_.getPtrTy(),
                                                builder_.getInt32Ty()};
   auto* printf_type =
       llvm::FunctionType::get(builder_.getInt32Ty(), print_args_types, false);
@@ -92,7 +92,7 @@ void IrBuilderVisitor::Visit(InputState* input_state) {
   static auto* format = builder_.CreateGlobalStringPtr("%d");
 
   std::vector<llvm::Type*> input_args_types = {
-      builder_.getInt8PtrTy(), builder_.getInt32Ty()->getPointerTo()};
+      builder_.getPtrTy(), builder_.getInt32Ty()->getPointerTo()};
   auto* scanf_type =
       llvm::FunctionType::get(builder_.getInt32Ty(), input_args_types, false);
   auto callee = module_->getOrInsertFunction("scanf", scanf_type);
